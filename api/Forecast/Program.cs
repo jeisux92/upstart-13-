@@ -1,11 +1,10 @@
 using Constants;
-using Forecast.Models;
 using Forecast.Services;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+var geocodingUrl = builder.Configuration.GetValue<string>("GeocodingUrl") ?? "http://fakeurl.com";
+var weatherUrl = builder.Configuration.GetValue<string>("WeatherUrl") ?? "http://fakeurl.com";
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -17,12 +16,12 @@ builder.Services.AddScoped<IGeocodingService, GeocodingService>();
 
 builder.Services.AddHttpClient(Api.GEOCODING_HTTP_CLIENT, c =>
 {
-    c.BaseAddress = new Uri("https://geocoding.geo.census.gov");
+    c.BaseAddress = new Uri(geocodingUrl);
 });
 
 builder.Services.AddHttpClient(Api.WEATHER_HTTP_CLIENT, c =>
 {
-    c.BaseAddress = new Uri("https://api.weather.gov");
+    c.BaseAddress = new Uri(weatherUrl);
     c.DefaultRequestHeaders.Add("User-Agent", "forecast api");
 });
 builder.Services.AddCors(options =>

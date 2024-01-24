@@ -33,9 +33,11 @@ ChartJS.register(
 
 function App() {
   const [forecast,setForecast]=useState<{data:Forecast,label:string}[]>([])
+  const [firstLoad,setFirstLoad]=useState(true)
   const [loading,setLoading]=useState(false)
   const onSearch=async(address:string)=>{
     try {
+      if(firstLoad)setFirstLoad(false)
       setLoading(true)
       const response = await getForecast(address)
       setForecast(response.map((item)=>({data:item,label:item.name})))
@@ -73,7 +75,7 @@ setLoading(false)
     <Grid width='100%'>
       <Typography variant='h4' component='h4' mb={4}>Weather Forecast</Typography>
       <Form onSearch={onSearch} loading={loading}/>
-      {forecast.length===0 && <Typography variant='h5'  width='100%' my={4}>No forecast available or type a valid address</Typography>}
+      {forecast.length===0 && !firstLoad&& !loading&&<Typography variant='h5'  width='100%' my={4}>No forecast available or type a valid address</Typography>}
       {forecast.length>0&&
       <Grid display='flex'flexDirection='column' alignItems='center' mt={3}>
 <Typography variant='h5'  width='100%' my={4}>Forecast for the next 7 days</Typography>
